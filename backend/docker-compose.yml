@@ -1,0 +1,46 @@
+version: '3.3'
+
+services:
+  db:
+    image: mysql:5.7
+    container_name: mysql
+    ports:
+      - "3306:3306"
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=app
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=root
+    volumes:
+      - mysql:/var/lib/mysql
+  web:
+    container_name: flask-app
+    build: . 
+    ports:
+      - "3000:3000"
+      - "5000:5000"
+    expose:
+      - "5000"
+    env_file: .env
+    environment:
+      - PYTHONUNBUFFERED=1 
+    command: python -u runserver.py
+    links:
+      - db
+    depends_on:
+      - migration
+    volumes: 
+      - .:/home/flask-app
+  migration:
+    build: .
+    container_name: flask-migration
+    command: flask db upgrade
+    volumes:
+      - .:/home/flask-app
+    links:
+      - db
+    depends_on:
+      - db
+volumes:
+  mysql:

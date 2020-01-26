@@ -1,0 +1,9 @@
+@import './variables';
+@import './fonts';
+@import "~antd/dist/antd.css";
+
+
+body {
+  background: #f8f9fa;
+  font-family: $font-family;
+}
